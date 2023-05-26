@@ -11,7 +11,6 @@ type Token int
 
 const (
 	Modifier Token = iota
-	Number
 	Identifier
 	Punct
 	Whitespace
