@@ -1,10 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"io/fs"
 	"os"
 	"regexp"
+	"strconv"
+	"strings"
 )
 
 type Token int
@@ -94,6 +97,7 @@ func main() {
 	// TODO: text alteration
 
 	// Original txt print
+	fmt.Println("Original text:")
 	for _, item := range lexer.tokenVals {
 		fmt.Printf("%s", item)
 	}
@@ -101,20 +105,56 @@ func main() {
 	fmt.Println()
 
 	// modified text assembly and print
-	var modText []string
+	// // mod analyzer
+
+	// // text modification
+	var modText [][]byte
 
 	for i, item := range lexer.tokens {
 		if item == 0 {
+			args := modAnalyzer(lexer.tokenVals[i]) + 1
+			//subtxt := modText[i-args : i]
+			if strings.Contains(lexer.tokenVals[i], "cap") {
+				for j := i - args; j < i; j++ {
+					modText[j] = bytes.Title(modText[j])
+				}
+			} else if strings.Contains(lexer.tokenVals[i], "up") {
+				for j := i - args; j < i; j++ {
+					modText[j] = bytes.ToUpper(modText[j])
+				}
+			} else if strings.Contains(lexer.tokenVals[i], "low") {
+				for j := i - args; j < i; j++ {
+					modText[j] = bytes.ToLower(modText[j])
+				}
+			}
 			continue
 		}
-		modText = append(modText, lexer.tokenVals[i])
+		modText = append(modText, []byte(lexer.tokenVals[i]))
 	}
 
+	// posAdjust := 0
+	// for i, item := range lexer.tokens {
+	// 	if item == 0 {
+	// 		args := modAnalyzer(lexer.tokenVals[i])
+	// 		for j := args; j > 0; j-- {
+	// 			fmt.Printf("i:%d <> j:%d <> args:%d <> posAdjust:%d <> modifier:%s\n", i, j, args, posAdjust, lexer.tokenVals[i])
+	// 			fmt.Println(string(modText[i-j-1-posAdjust]))
+	// 		}
+	// 		posAdjust++
+	// 		continue
+	// 	}
+	// 	modText = append(modText, []byte(lexer.tokenVals[i]))
+	// }
+	//	modText[0] = bytes.ToUpper(modText[0])
+
+	// // modText print
+	fmt.Println("Modified text")
 	for _, item := range modText {
-		fmt.Printf("%s", item)
+		fmt.Printf("%s", string(item))
 	}
 	fmt.Println()
 	fmt.Println()
+
 	// Print the tokens
 	// for i, token := range lexer.tokens {
 	// 	switch token {
@@ -132,4 +172,15 @@ func main() {
 	// 		fmt.Printf("Invalid: %s\n", lexer.tokenVals[i])
 	// 	}
 	// }
+}
+
+// mod analyzer
+func modAnalyzer(mod string) int {
+	reArg := regexp.MustCompile(`\d+`)
+	match := reArg.FindString(mod)
+	if match == "" {
+		return 1
+	}
+	args, _ := strconv.Atoi(match)
+	return args * 2
 }
