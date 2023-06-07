@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/hex"
 	"fmt"
 	"io/fs"
 	"os"
@@ -113,7 +114,7 @@ func main() {
 	for i, item := range lexer.tokens {
 		if item == 0 {
 			args := modAnalyzer(lexer.tokenVals[i]) + 1
-			//subtxt := modText[i-args : i]
+			subtxt := modText[i-args : i]
 			if strings.Contains(lexer.tokenVals[i], "cap") {
 				for j := i - args; j < i; j++ {
 					modText[j] = bytes.Title(modText[j])
@@ -126,26 +127,25 @@ func main() {
 				for j := i - args; j < i; j++ {
 					modText[j] = bytes.ToLower(modText[j])
 				}
+			} else if strings.Contains(lexer.tokenVals[i], "hex") {
+				fmt.Println("hex", subtxt)
+				//	var number string
+				for j := i - args; j < i; j++ {
+					bs, _ := hex.DecodeString(string(modText[j]))
+					for _, item := range bs {
+						number := fmt.Sprintf("%d", item)
+						modText[j] = []byte(number)
+					}
+				}
 			}
-			continue
+			for _, item := range subtxt {
+				fmt.Printf("%s", string(item))
+			}
+			fmt.Println()
 		}
 		modText = append(modText, []byte(lexer.tokenVals[i]))
 	}
-
-	// posAdjust := 0
-	// for i, item := range lexer.tokens {
-	// 	if item == 0 {
-	// 		args := modAnalyzer(lexer.tokenVals[i])
-	// 		for j := args; j > 0; j-- {
-	// 			fmt.Printf("i:%d <> j:%d <> args:%d <> posAdjust:%d <> modifier:%s\n", i, j, args, posAdjust, lexer.tokenVals[i])
-	// 			fmt.Println(string(modText[i-j-1-posAdjust]))
-	// 		}
-	// 		posAdjust++
-	// 		continue
-	// 	}
-	// 	modText = append(modText, []byte(lexer.tokenVals[i]))
-	// }
-	//	modText[0] = bytes.ToUpper(modText[0])
+	fmt.Println()
 
 	// // modText print
 	fmt.Println("Modified text")
