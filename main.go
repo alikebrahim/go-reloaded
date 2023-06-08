@@ -113,28 +113,38 @@ func main() {
 
 	for i, item := range lexer.tokens {
 		if item == 0 {
-			args := modAnalyzer(lexer.tokenVals[i]) + 1
-			subtxt := modText[i-args : i]
+			NumOfIdens := modAnalyzer(lexer.tokenVals[i]) + 1
+			subtxt := modText[i-NumOfIdens : i]
 			if strings.Contains(lexer.tokenVals[i], "cap") {
-				for j := i - args; j < i; j++ {
+				for j := i - NumOfIdens; j < i; j++ {
 					modText[j] = bytes.Title(modText[j])
 				}
 			} else if strings.Contains(lexer.tokenVals[i], "up") {
-				for j := i - args; j < i; j++ {
+				for j := i - NumOfIdens; j < i; j++ {
 					modText[j] = bytes.ToUpper(modText[j])
 				}
 			} else if strings.Contains(lexer.tokenVals[i], "low") {
-				for j := i - args; j < i; j++ {
+				for j := i - NumOfIdens; j < i; j++ {
 					modText[j] = bytes.ToLower(modText[j])
 				}
 			} else if strings.Contains(lexer.tokenVals[i], "hex") {
 				fmt.Println("hex", subtxt)
 				//	var number string
-				for j := i - args; j < i; j++ {
+				for j := i - NumOfIdens; j < i; j++ {
 					bs, _ := hex.DecodeString(string(modText[j]))
 					for _, item := range bs {
 						number := fmt.Sprintf("%d", item)
 						modText[j] = []byte(number)
+					}
+				}
+			} else if strings.Contains(lexer.tokenVals[i], "bin") {
+				for j := i - NumOfIdens; j < i; j++ {
+					if string(modText[j]) != " " {
+						decimal, _ := strconv.ParseUint(string(modText[j]), 2, 64)
+						decimalByte := []byte{uint8(decimal)}
+						copy(modText[j], decimalByte[:])
+					} else {
+						modText[j] = []uint8{32}
 					}
 				}
 			}
@@ -145,6 +155,7 @@ func main() {
 		}
 		modText = append(modText, []byte(lexer.tokenVals[i]))
 	}
+	fmt.Printf("type of modText item: %T", modText)
 	fmt.Println()
 
 	// // modText print
@@ -181,6 +192,6 @@ func modAnalyzer(mod string) int {
 	if match == "" {
 		return 1
 	}
-	args, _ := strconv.Atoi(match)
-	return args * 2
+	NumOfIdens, _ := strconv.Atoi(match)
+	return NumOfIdens * 2
 }
