@@ -42,7 +42,7 @@ func (l *Lexer) Scan() {
 	reIdentifier := regexp.MustCompile(`[a-zA-Z0-9_]\w*`)
 	reModifier := regexp.MustCompile(`\([hex|bin|cap|low|up]+(?:,\s\d)?\)`)
 	rePunct := regexp.MustCompile(`[.,?!:;]+`)
-	reQuotemark := regexp.MustCompile(`'`)
+	reQuotemark := regexp.MustCompile(`['|"]`)
 	reWhitespace := regexp.MustCompile(`\s+`)
 
 	for l.position < len(l.input) {
@@ -78,8 +78,6 @@ func (l *Lexer) Scan() {
 
 func main() {
 	// ensure proper usage
-	// == two arguments are passed of type .txt
-	// & input file == exists
 	if len(os.Args) != 3 {
 		fmt.Println("Usage requires input.txt and output.txt")
 	}
@@ -95,26 +93,13 @@ func main() {
 	lexer := NewLexer(string(reader))
 	lexer.Scan()
 
-	// TODO: text alteration
+	// text alteration
 
-	// Original txt print
-	fmt.Println("Original text:")
-	for _, item := range lexer.tokenVals {
-		fmt.Printf("%s", item)
-	}
-	fmt.Println()
-	fmt.Println()
-
-	// modified text assembly and print
-	// // mod analyzer
-
-	// // text modification
 	var modText [][]byte
 
 	for i, item := range lexer.tokens {
 		if item == 0 {
 			NumOfIdens := modAnalyzer(lexer.tokenVals[i]) + 1
-			subtxt := modText[i-NumOfIdens : i]
 			if strings.Contains(lexer.tokenVals[i], "cap") {
 				for j := i - NumOfIdens; j < i; j++ {
 					modText[j] = bytes.Title(modText[j])
@@ -128,8 +113,6 @@ func main() {
 					modText[j] = bytes.ToLower(modText[j])
 				}
 			} else if strings.Contains(lexer.tokenVals[i], "hex") {
-				fmt.Println("hex", subtxt)
-				//	var number string
 				for j := i - NumOfIdens; j < i; j++ {
 					bs, _ := hex.DecodeString(string(modText[j]))
 					for _, item := range bs {
@@ -141,48 +124,95 @@ func main() {
 				for j := i - NumOfIdens; j < i; j++ {
 					if string(modText[j]) != " " {
 						decimal, _ := strconv.ParseUint(string(modText[j]), 2, 64)
-						decimalByte := []byte{uint8(decimal)}
-						copy(modText[j], decimalByte[:])
+						dec := fmt.Sprintf("%d", decimal)
+						modText[j] = []byte(dec)
 					} else {
-						modText[j] = []uint8{32}
+						continue
 					}
 				}
 			}
-			for _, item := range subtxt {
-				fmt.Printf("%s", string(item))
-			}
-			fmt.Println()
 		}
 		modText = append(modText, []byte(lexer.tokenVals[i]))
 	}
-	fmt.Printf("type of modText item: %T", modText)
-	fmt.Println()
 
-	// // modText print
-	fmt.Println("Modified text")
+	var prepText [][]byte
+	copy(prepText, modText)
+	reModifier := regexp.MustCompile(`\([hex|bin|cap|low|up]+(?:,\s\d)?\)`)
+
 	for _, item := range modText {
-		fmt.Printf("%s", string(item))
+		match := reModifier.FindString(string(item))
+		if match != "" {
+			continue
+		}
+		prepText = append(prepText, item)
+	}
+
+	var finalText [][]byte
+	prep := bytes.Join(prepText, []byte{})
+	lexer2 := NewLexer((string(prep)))
+	lexer2.Scan()
+
+	for i, item := range lexer2.tokens {
+		if i+1 < len(lexer2.tokens) && item == 4 {
+			if lexer2.tokens[i+1] == 2 {
+				continue
+			}
+		}
+		if i+1 < len(lexer2.tokens) && item == 2 {
+			if lexer2.tokens[i+1] != 4 {
+				var slice [][]byte
+				slice = append(slice, []byte(lexer2.tokenVals[i]))
+				slice = append(slice, []byte(" "))
+				jbs := bytes.Join(slice, []byte(""))
+				finalText = append(finalText, jbs)
+				continue
+			}
+
+		}
+		if i+1 < len(lexer2.tokens) && item == 3 {
+			wrappedText := wrapQoutation(i, lexer2)
+			finalText = append(finalText, wrappedText)
+			break
+		}
+		if item == 4 && len(lexer2.tokenVals[i]) != 1 {
+			finalText = append(finalText, []byte(" "))
+			continue
+		}
+		finalText = append(finalText, []byte(lexer2.tokenVals[i]))
+	}
+	for _, item := range finalText {
+		fmt.Printf("%s", item)
 	}
 	fmt.Println()
-	fmt.Println()
-
-	// Print the tokens
-	// for i, token := range lexer.tokens {
-	// 	switch token {
-	// 	case Modifier:
-	// 		fmt.Printf("Modifier: %s\n", lexer.tokenVals[i])
-	// 	case Identifier:
-	// 		fmt.Printf("Identifier: %s\n", lexer.tokenVals[i])
-	// 	case Whitespace:
-	// 		fmt.Printf("Whitespace: %s\n", lexer.tokenVals[i])
-	// 	case Punct:
-	// 		fmt.Printf("Punct: %s\n", lexer.tokenVals[i])
-	// 	case Quotemark:
-	// 		fmt.Printf("Quotemark: %s\n", lexer.tokenVals[i])
-	// 	case Invalid:
-	// 		fmt.Printf("Invalid: %s\n", lexer.tokenVals[i])
-	// 	}
+	file, _ := os.Create("./result.txt")
+	for _, item := range prepText {
+		file.Write(item)
+	}
+	// // // modText print
+	// fmt.Println("Modified text")
+	// for _, item := range modText {
+	// 	fmt.Printf("%s", string(item))
 	// }
+	// fmt.Println()
+	// fmt.Println()
+
+	//Print the tokens
+	// 	for i, token := range lexer2.tokens {
+	// 		switch token {
+	// 		case Modifier:
+	// 			fmt.Printf("Modifier: %s\n", lexer2.tokenVals[i])
+	// 		case Identifier:
+	// 			fmt.Printf("Identifier: %s\n", lexer2.tokenVals[i])
+	// 		case Whitespace:
+	// 			fmt.Printf("Whitespace: %s\n", lexer2.tokenVals[i])
+	// 		case Punct:
+	// 			fmt.Printf("Punct: %s\n", lexer2.tokenVals[i])
+	// 		case Quotemark:
+	// 			fmt.Printf("Quotemark: %s\n", lexer2.tokenVals[i])
+	// 		case Invalid:
+	// 			fmt.Printf("Invalid: %s\n", lexer2.tokenVals[i])
+	// 		}
+	// 	}
 }
 
 // mod analyzer
@@ -194,4 +224,32 @@ func modAnalyzer(mod string) int {
 	}
 	NumOfIdens, _ := strconv.Atoi(match)
 	return NumOfIdens * 2
+}
+
+var slice [][]byte
+
+//var wrapped [][]byte
+
+func wrapQoutation(i int, l *Lexer) []byte {
+	slice = append(slice, []byte(l.tokenVals[i]))
+	updateI := i + 1
+	var iters int
+	for j := updateI; j < len(l.tokens); j++ {
+		if l.tokens[j] == 3 {
+			slice = append(slice, []byte(l.tokenVals[j]))
+			iters++
+			break
+		}
+		if l.tokens[j] == 4 {
+			if l.tokens[j-1] == 3 || l.tokens[j+1] == 3 {
+				iters++
+				continue
+			}
+		}
+		iters++
+		slice = append(slice, []byte(l.tokenVals[j]))
+
+	}
+
+	return bytes.Join(slice, []byte(""))
 }
