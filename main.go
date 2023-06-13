@@ -79,15 +79,18 @@ func (l *Lexer) Scan() {
 func main() {
 	// ensure proper usage
 	if len(os.Args) != 3 {
-		fmt.Println("Usage requires input.txt and output.txt")
+		fmt.Println("ERROR: Usage requires input.txt and output.txt")
+		return
 	}
 	if os.Args[1][len(os.Args[1])-4:] != ".txt" || os.Args[2][len(os.Args[2])-4:] != ".txt" {
-		fmt.Println("Files have to be .txt")
+		fmt.Println("ERROR: Files have to be .txt")
+		return
 	}
 	input_file := os.Args[1]
 	reader, err := fs.ReadFile(os.DirFS("."), input_file)
 	if err != nil {
-		fmt.Println("Error opening input file")
+		fmt.Println("ERROR: Error opening input file")
+		return
 	}
 
 	lexer := NewLexer(string(reader))
@@ -170,13 +173,26 @@ func main() {
 
 		}
 		if i+1 < len(lexer2.tokens) && item == 3 {
-			wrappedText := wrapQoutation(i, lexer2)
+			wrappedText := wrapQoute(i, lexer2)
 			finalText = append(finalText, wrappedText)
 			break
 		}
+
 		if item == 4 && len(lexer2.tokenVals[i]) != 1 {
 			finalText = append(finalText, []byte(" "))
 			continue
+		}
+		if len(lexer2.tokenVals[i]) == 1 && lexer2.tokenVals[i][0] == 'a' {
+			if lexer2.tokenVals[i+2][0] == 'a' || lexer2.tokenVals[i+2][0] == 'e' || lexer2.tokenVals[i+2][0] == 'i' || lexer2.tokenVals[i+2][0] == 'o' || lexer2.tokenVals[i+2][0] == 'u' {
+				finalText = append(finalText, []byte("an"))
+				continue
+			}
+		}
+		if len(lexer2.tokenVals[i]) == 1 && lexer2.tokenVals[i][0] == 'A' {
+			if lexer2.tokenVals[i+2][0] == 'a' || lexer2.tokenVals[i+2][0] == 'e' || lexer2.tokenVals[i+2][0] == 'i' || lexer2.tokenVals[i+2][0] == 'o' || lexer2.tokenVals[i+2][0] == 'u' {
+				finalText = append(finalText, []byte("An"))
+				continue
+			}
 		}
 		finalText = append(finalText, []byte(lexer2.tokenVals[i]))
 	}
@@ -216,6 +232,7 @@ func main() {
 }
 
 // mod analyzer
+
 func modAnalyzer(mod string) int {
 	reArg := regexp.MustCompile(`\d+`)
 	match := reArg.FindString(mod)
@@ -228,25 +245,18 @@ func modAnalyzer(mod string) int {
 
 var slice [][]byte
 
-//var wrapped [][]byte
-
-func wrapQoutation(i int, l *Lexer) []byte {
+func wrapQoute(i int, l *Lexer) []byte {
 	slice = append(slice, []byte(l.tokenVals[i]))
-	updateI := i + 1
-	var iters int
-	for j := updateI; j < len(l.tokens); j++ {
+	for j := i + 1; j < len(l.tokens); j++ {
 		if l.tokens[j] == 3 {
 			slice = append(slice, []byte(l.tokenVals[j]))
-			iters++
 			break
 		}
 		if l.tokens[j] == 4 {
 			if l.tokens[j-1] == 3 || l.tokens[j+1] == 3 {
-				iters++
 				continue
 			}
 		}
-		iters++
 		slice = append(slice, []byte(l.tokenVals[j]))
 
 	}
