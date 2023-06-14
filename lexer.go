@@ -14,18 +14,18 @@ const (
 )
 
 type Lexer struct {
-	Input     string
+	Input     []byte
 	Position  int
 	Tokens    []Token
-	TokenVals []string
+	TokenVals [][]byte
 }
 
-func NewLexer(Input string) *Lexer {
+func NewLexer(Input []byte) *Lexer {
 	return &Lexer{
 		Input:     Input,
 		Position:  0,
 		Tokens:    []Token{},
-		TokenVals: []string{},
+		TokenVals: [][]byte{},
 	}
 }
 
@@ -39,29 +39,29 @@ func (l *Lexer) Scan() {
 	for l.Position < len(l.Input) {
 		substr := l.Input[l.Position:]
 
-		if match := reIdentifier.FindStringIndex(substr); match != nil && match[0] == 0 {
+		if match := reIdentifier.FindIndex(substr); match != nil && match[0] == 0 {
 			l.Tokens = append(l.Tokens, Identifier)
-			l.TokenVals = append(l.TokenVals, reIdentifier.FindString(substr))
+			l.TokenVals = append(l.TokenVals, reIdentifier.Find(substr))
 			l.Position += match[1]
-		} else if match := reModifier.FindStringIndex(substr); match != nil && match[0] == 0 {
+		} else if match := reModifier.FindIndex(substr); match != nil && match[0] == 0 {
 			l.Tokens = append(l.Tokens, Modifier)
-			l.TokenVals = append(l.TokenVals, reModifier.FindString(substr))
+			l.TokenVals = append(l.TokenVals, reModifier.Find(substr))
 			l.Position += match[1]
-		} else if match := reWhitespace.FindStringIndex(substr); match != nil && match[0] == 0 {
+		} else if match := reWhitespace.FindIndex(substr); match != nil && match[0] == 0 {
 			l.Tokens = append(l.Tokens, Whitespace)
-			l.TokenVals = append(l.TokenVals, reWhitespace.FindString(substr))
+			l.TokenVals = append(l.TokenVals, reWhitespace.Find(substr))
 			l.Position += match[1]
-		} else if match := rePunct.FindStringIndex(substr); match != nil && match[0] == 0 {
+		} else if match := rePunct.FindIndex(substr); match != nil && match[0] == 0 {
 			l.Tokens = append(l.Tokens, Punct)
-			l.TokenVals = append(l.TokenVals, rePunct.FindString(substr))
+			l.TokenVals = append(l.TokenVals, rePunct.Find(substr))
 			l.Position += match[1]
-		} else if match := reQuotemark.FindStringIndex(substr); match != nil && match[0] == 0 {
+		} else if match := reQuotemark.FindIndex(substr); match != nil && match[0] == 0 {
 			l.Tokens = append(l.Tokens, Quotemark)
-			l.TokenVals = append(l.TokenVals, reQuotemark.FindString(substr))
+			l.TokenVals = append(l.TokenVals, reQuotemark.Find(substr))
 			l.Position += match[1]
 		} else {
 			l.Tokens = append(l.Tokens, Invalid)
-			l.TokenVals = append(l.TokenVals, string(substr[0]))
+			l.TokenVals = append(l.TokenVals, []byte(substr))
 			l.Position++
 		}
 	}

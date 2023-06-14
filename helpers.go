@@ -2,20 +2,23 @@ package goreloaded
 
 import (
 	"bytes"
+	"encoding/binary"
+	"fmt"
 	"regexp"
-	"strconv"
 )
 
 var slice [][]byte
 
-func ModAnalyzer(mod string) int {
-	reArg := regexp.MustCompile(`\d+`)
-	match := reArg.FindString(mod)
-	if match == "" {
+func ModAnalyzer(mod []byte) int {
+	reIndx := regexp.MustCompile(`\d+`)
+	match := reIndx.Find(mod)
+	if match == nil {
 		return 1
 	}
-	NumOfIdens, _ := strconv.Atoi(match)
-	return NumOfIdens * 2
+	NumOfIdens := binary.BigEndian.Uint64(match)
+	NumOfIdens_int := int(NumOfIdens)
+	fmt.Println(NumOfIdens_int)
+	return NumOfIdens_int * 2
 }
 
 func WrapQoute(i int, l *Lexer) []byte {
