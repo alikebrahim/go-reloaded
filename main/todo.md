@@ -1,0 +1,1 @@
+should I scan the modText and then operate on it again just like I did for the first lexer? I guess adding a token for "a|A"s that are followed by a vowel would make it even easier to alter the text. For I would be able to use the already defined tokens to make the necessary amendments instead of redefining the modifier regex
