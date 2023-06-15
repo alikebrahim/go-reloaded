@@ -7,21 +7,20 @@ import (
 func TextMod(t *[][]byte, l *Lexer) {
 	for i, item := range l.Tokens {
 		if item == 0 {
-			NumOfIdens := ModAnalyzer(l.TokenVals[i]) + 1
+			NumOfIdens := ModAnalyzer(l.TokenVals[i])
 			if bytes.Contains(l.TokenVals[i], []byte("cap")) {
 				for j := i - NumOfIdens; j < i; j++ {
-					*t = append((*t)[:j], bytes.Title(l.TokenVals[j]))
+					*t = append((*t)[:j], Cap(l.TokenVals[j]))
 				}
-				continue
-			} //else if strings.Contains(l.TokenVals[i], "up") {
-			// 	for j := i - NumOfIdens; j < i; j++ {
-			// 		l.TokenVals[j] = bytes.ToUpper(l.TokenVals[j])
-			// 	}
-			// } else if strings.Contains(l.TokenVals[i], "low") {
-			// 	for j := i - NumOfIdens; j < i; j++ {
-			// 		l.TokenVals[j] = bytes.ToLower(l.TokenVals[j])
-			// 	}
-			// } else if strings.Contains(l.TokenVals[i], "hex") {
+			} else if bytes.Contains(l.TokenVals[i], []byte("up")) {
+				for j := i - NumOfIdens; j < i; j++ {
+					*t = append((*t)[:j], Up(l.TokenVals[j]))
+				}
+			} else if bytes.Contains(l.TokenVals[i], []byte("low")) {
+				for j := i - NumOfIdens; j < i; j++ {
+					*t = append((*t)[:j], Low(l.TokenVals[j]))
+				}
+			} //else if strings.Contains(l.TokenVals[i], "hex") {
 			// 	for j := i - NumOfIdens; j < i; j++ {
 			// 		bs, _ := hex.DecodeString(string(l.TokenVals[j]))
 			// 		for _, item := range bs {

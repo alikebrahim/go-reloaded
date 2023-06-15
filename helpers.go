@@ -2,8 +2,6 @@ package goreloaded
 
 import (
 	"bytes"
-	"encoding/binary"
-	"fmt"
 	"regexp"
 )
 
@@ -15,10 +13,7 @@ func ModAnalyzer(mod []byte) int {
 	if match == nil {
 		return 1
 	}
-	NumOfIdens := binary.BigEndian.Uint64(match)
-	NumOfIdens_int := int(NumOfIdens)
-	fmt.Println(NumOfIdens_int)
-	return NumOfIdens_int * 2
+	return int(match[0]-48) * 2
 }
 
 func WrapQoute(i int, l *Lexer) []byte {

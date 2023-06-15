@@ -111,20 +111,20 @@ func main() {
 	// fmt.Println()
 
 	//Print the Tokens
-	for i, token := range lexer.Tokens {
-		switch token {
-		case goreloaded.Modifier:
-			fmt.Printf("Modifier: %s\n", lexer.TokenVals[i])
-		case goreloaded.Identifier:
-			fmt.Printf("Identifier: %s\n", lexer.TokenVals[i])
-		case goreloaded.Whitespace:
-			fmt.Printf("Whitespace: %s\n", lexer.TokenVals[i])
-		case goreloaded.Punct:
-			fmt.Printf("Punct: %s\n", lexer.TokenVals[i])
-		case goreloaded.Quotemark:
-			fmt.Printf("Quotemark: %s\n", lexer.TokenVals[i])
-		case goreloaded.Invalid:
-			fmt.Printf("Invalid: %s\n", lexer.TokenVals[i])
-		}
-	}
+	// for i, token := range lexer.Tokens {
+	// 	switch token {
+	// 	case goreloaded.Modifier:
+	// 		fmt.Printf("Modifier: %s\n", lexer.TokenVals[i])
+	// 	case goreloaded.Identifier:
+	// 		fmt.Printf("Identifier: %s\n", lexer.TokenVals[i])
+	// 	case goreloaded.Whitespace:
+	// 		fmt.Printf("Whitespace: %s\n", lexer.TokenVals[i])
+	// 	case goreloaded.Punct:
+	// 		fmt.Printf("Punct: %s\n", lexer.TokenVals[i])
+	// 	case goreloaded.Quotemark:
+	// 		fmt.Printf("Quotemark: %s\n", lexer.TokenVals[i])
+	// 	case goreloaded.Invalid:
+	// 		fmt.Printf("Invalid: %s\n", lexer.TokenVals[i])
+	// 	}
+	// }
 }
