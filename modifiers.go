@@ -1,14 +1,28 @@
 package goreloaded
 
+import "fmt"
+
 // ASCII:A==65-Z==90 || a==97-z==122
+var hexMap = map[byte]int{
+	byte('A'): 10,
+	byte('B'): 11,
+	byte('C'): 12,
+	byte('D'): 13,
+	byte('E'): 14,
+	byte('F'): 15,
+}
+
 func Cap(b []byte) []byte {
 	var cappedB []byte
 	for i, item := range b {
-		if i == 0 && item > 90 {
+		if i == 0 && (item >= 97 && item <= 122) {
 			cappedB = append(cappedB, item-32)
-		} else {
+		} else if i > 0 && (item >= 65 && item <= 90) {
 
+			cappedB = append(cappedB, item+32)
+		} else {
 			cappedB = append(cappedB, item)
+
 		}
 	}
 	return cappedB
@@ -17,10 +31,10 @@ func Cap(b []byte) []byte {
 func Up(b []byte) []byte {
 	var upperB []byte
 	for _, item := range b {
-		if item == byte(' ') {
-			upperB = append(upperB, item)
-		} else {
+		if item >= 97 && item <= 122 {
 			upperB = append(upperB, item-32)
+		} else {
+			upperB = append(upperB, item)
 		}
 	}
 	return upperB
@@ -29,13 +43,64 @@ func Up(b []byte) []byte {
 func Low(b []byte) []byte {
 	var lowerB []byte
 	for _, item := range b {
-		if item == byte(' ') {
-			lowerB = append(lowerB, item)
-		} else {
+		if item >= 65 && item <= 90 {
 			lowerB = append(lowerB, item+32)
+		} else {
+			lowerB = append(lowerB, item)
 		}
 	}
 	return lowerB
+}
+
+// 0 == 48 ==> 9 ==57
+func Hex(b []byte) []byte {
+	var sum int
+	var sumB []byte
+	hexLen := len(b)
+	power := 0
+	if b[0] == byte(' ') {
+		return nil
+	}
+	for i := hexLen - 1; i >= 0; i-- {
+		if _, ok := hexMap[b[i]]; ok {
+			hexDigit := hexMap[b[i]]
+			sum += hexDigit * Power(16, power)
+		} else {
+			sum += int(b[i]-48) * Power(16, power)
+		}
+		power++
+	}
+	sumStr := fmt.Sprintf("%d", sum)
+	for i := 0; i < len(sumStr); i++ {
+		sumB = append(sumB, byte(sumStr[i]))
+	}
+	return sumB
+}
+
+func Bin(b []byte) []byte {
+	var sum int
+	var sumB []byte
+	binLen := len(b)
+	power := 0
+	if b[0] == byte(' ') {
+		return nil
+	}
+	for i := binLen - 1; i >= 0; i-- {
+		sum += int(b[i]-48) * Power(2, power)
+		power++
+	}
+	sumStr := fmt.Sprintf("%d", sum)
+	for i := 0; i < len(sumStr); i++ {
+		sumB = append(sumB, byte(sumStr[i]))
+	}
+	return sumB
+}
+
+func Power(a int, b int) int {
+	if b == 0 {
+		return 1
+	}
+	return a * Power(a, b-1)
 }
 
 // func TrimSpace(b []byte) []byte {

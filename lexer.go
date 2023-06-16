@@ -30,7 +30,7 @@ func NewLexer(Input []byte) *Lexer {
 }
 
 func (l *Lexer) Scan() {
-	reIdentifier := regexp.MustCompile(`[a-zA-Z0-9_]\w*`)
+	reIdentifier := regexp.MustCompile(`[a-zA-Z0-9_]*[']?[a-zA-Z0-9_]\w*[']?`)
 	reModifier := regexp.MustCompile(`\([hex|bin|cap|low|up]+(?:,\s\d)?\)`)
 	rePunct := regexp.MustCompile(`[.,?!:;]+`)
 	reQuotemark := regexp.MustCompile(`['|"]`)

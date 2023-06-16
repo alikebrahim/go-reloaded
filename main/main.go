@@ -29,11 +29,16 @@ func main() {
 
 	// text alteration
 	var text [][]byte
-	goreloaded.TextMod(&text, lexer)
+	goreloaded.ModsMap(lexer)
+	goreloaded.ModEdit(&text, lexer)
+	goreloaded.TextFmt(&goreloaded.FmtText)
+
+	//goreloaded.TextMod(&text, lexer)
 	for _, item := range text {
 		fmt.Printf("%s", item)
 	}
-
+	fmt.Println()
+	//lastb := fmt.Sprintf("%v", text[len(text)-1])
 	//var modText [][]byte
 
 	// var prepText [][]byte

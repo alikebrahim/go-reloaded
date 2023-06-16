@@ -6,14 +6,19 @@ import (
 )
 
 var slice [][]byte
+var modIndxs []int
+var ModMap = make(map[int][]byte)
+var MapLen int
 
-func ModAnalyzer(mod []byte) int {
+func ModAnalyzer(mod []byte) (int, []byte) {
+	reMod := regexp.MustCompile(`[hex|bin|cap|low|up]`)
 	reIndx := regexp.MustCompile(`\d+`)
-	match := reIndx.Find(mod)
-	if match == nil {
-		return 1
+	modMatch := reMod.Find(mod)
+	indxMatch := reIndx.Find(mod)
+	if indxMatch == nil {
+		return 2, modMatch
 	}
-	return int(match[0]-48) * 2
+	return int(indxMatch[0]-48) * 2, modMatch
 }
 
 func WrapQoute(i int, l *Lexer) []byte {
@@ -33,4 +38,23 @@ func WrapQoute(i int, l *Lexer) []byte {
 	}
 
 	return bytes.Join(slice, []byte(""))
+}
+
+func LocateModifiers(l *Lexer) {
+	for i, item := range l.Tokens {
+		if item == 0 {
+			modIndxs = append(modIndxs, i)
+		}
+	}
+}
+
+func ModsMap(l *Lexer) {
+	LocateModifiers(l)
+	for _, item := range modIndxs {
+		forMod, mod := ModAnalyzer(l.TokenVals[item])
+		for i := 0; i <= forMod; i++ {
+			ModMap[item-i] = mod
+			MapLen++
+		}
+	}
 }
