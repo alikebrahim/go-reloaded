@@ -2,7 +2,6 @@ package goreloaded
 
 import "fmt"
 
-// ASCII:A==65-Z==90 || a==97-z==122
 var hexMap = map[byte]int{
 	byte('A'): 10,
 	byte('B'): 11,
@@ -52,7 +51,6 @@ func Low(b []byte) []byte {
 	return lowerB
 }
 
-// 0 == 48 ==> 9 ==57
 func Hex(b []byte) []byte {
 	var sum int
 	var sumB []byte
@@ -102,15 +100,3 @@ func Power(a int, b int) int {
 	}
 	return a * Power(a, b-1)
 }
-
-// func TrimSpace(b []byte) []byte {
-// 	var trimmedB []byte
-// 	for _, item := range b {
-// 		if item == byte(' ') {
-// 			continue
-// 		} else {
-// 			trimmedB = append(trimmedB, item)
-// 		}
-// 	}
-// 	return trimmedB
-// }
