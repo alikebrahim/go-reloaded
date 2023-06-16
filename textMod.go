@@ -56,7 +56,6 @@ func TextFmt(tb *[][]byte) {
 			}
 
 		}
-		//quotedit
 		if i+1 < len(fmtlexer.Tokens) && item == 3 {
 			firstIndex := bytes.IndexByte(fmtlexer.TokenVals[i], '\'')
 			lastIndex := bytes.LastIndexByte(fmtlexer.TokenVals[i], '\'')
@@ -87,20 +86,4 @@ func TextFmt(tb *[][]byte) {
 		*tb = append(*tb, []byte(fmtlexer.TokenVals[i]))
 	}
 
-	// for i, token := range fmtlexer.Tokens {
-	// 	switch token {
-	// 	case Modifier:
-	// 		fmt.Printf("Modifier: %s\n", fmtlexer.TokenVals[i])
-	// 	case Identifier:
-	// 		fmt.Printf("Identifier: %s\n", fmtlexer.TokenVals[i])
-	// 	case Whitespace:
-	// 		fmt.Printf("Whitespace: %s\n", fmtlexer.TokenVals[i])
-	// 	case Punct:
-	// 		fmt.Printf("Punct: %s\n", fmtlexer.TokenVals[i])
-	// 	case Quotedtext:
-	// 		fmt.Printf("Quotedtext: %s\n", fmtlexer.TokenVals[i])
-	// 	case Invalid:
-	// 		fmt.Printf("Invalid: %s\n", fmtlexer.TokenVals[i])
-	// 	}
-	// }
 }
