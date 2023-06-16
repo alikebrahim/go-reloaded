@@ -32,20 +32,10 @@ func main() {
 	goreloaded.ModEdit(&goreloaded.Text, lexer)
 	goreloaded.TextFmt(&goreloaded.FmtText)
 
-	//goreloaded.TextMod(&text, lexer)
-	fmt.Println("Before format:")
-	fmt.Println()
-	for _, item := range goreloaded.Text {
-		fmt.Printf("%s", item)
-	}
-	fmt.Println()
-
-	fmt.Println("after format:")
-	fmt.Println()
+	file, _ := os.Create("./result.txt")
 	for _, item := range goreloaded.FmtText {
-		fmt.Printf("%s", item)
+		file.Write(item)
 	}
-	fmt.Println()
 
 	//Print the Tokens
 	//prototypr for token printing
