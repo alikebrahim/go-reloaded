@@ -47,12 +47,12 @@ func TextFmt(tb *[][]byte) {
 	fmtlexer := NewLexer(bytes.Join(Text, []byte("")))
 	fmtlexer.Scan()
 	for i, item := range fmtlexer.Tokens {
-		if item == 4 {
+		if i+1 < len(fmtlexer.Tokens) && item == 4 {
 			if fmtlexer.Tokens[i+1] == 2 {
 				continue
 			}
 		}
-		if item == 2 {
+		if i+1 < len(fmtlexer.Tokens) && item == 2 {
 			if fmtlexer.Tokens[i+1] != 4 {
 				var slice [][]byte
 				slice = append(slice, []byte(fmtlexer.TokenVals[i]))

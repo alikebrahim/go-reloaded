@@ -78,6 +78,7 @@ func Hex(b []byte) []byte {
 	for i := 0; i < len(sumStr); i++ {
 		sumB = append(sumB, byte(sumStr[i]))
 	}
+	sumB = append(sumB, byte(' '))
 	return sumB
 }
 
@@ -97,5 +98,6 @@ func Bin(b []byte) []byte {
 	for i := 0; i < len(sumStr); i++ {
 		sumB = append(sumB, byte(sumStr[i]))
 	}
+	sumB = append(sumB, byte(' '))
 	return sumB
 }
