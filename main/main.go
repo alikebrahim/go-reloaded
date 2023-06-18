@@ -41,6 +41,7 @@ func main() {
 
 	//Print the Tokens
 	//prototypr for token printing
+	// fmt.Println("**** @Main ****")
 	// for i, token := range lexer.Tokens {
 	// 	switch token {
 	// 	case goreloaded.Modifier:
@@ -57,4 +58,5 @@ func main() {
 	// 		fmt.Printf("Invalid: %s\n", lexer.TokenVals[i])
 	// 	}
 	// }
+
 }

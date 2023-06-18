@@ -63,7 +63,7 @@ func TextFmt(tb *[][]byte) {
 			}
 
 		}
-		if item == 3 {
+		if item == 3 || item == 6 {
 			*tb = append(*tb, QuoteHandler(fmtlexer.TokenVals[i]))
 			continue
 		}
@@ -122,6 +122,7 @@ func QuoteModEdit(t *[][]byte, l *Lexer) {
 func QuoteTextFmt(tb *[][]byte) {
 	fmtlexer := NewLexer(bytes.Join(QuoteText, []byte("")))
 	fmtlexer.QuoteFmtScan()
+
 	for i, item := range fmtlexer.Tokens {
 		if item == 4 {
 			if fmtlexer.Tokens[i+1] == 2 {
