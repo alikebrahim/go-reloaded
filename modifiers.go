@@ -9,6 +9,12 @@ var hexMap = map[byte]int{
 	byte('D'): 13,
 	byte('E'): 14,
 	byte('F'): 15,
+	byte('a'): 10,
+	byte('b'): 11,
+	byte('c'): 12,
+	byte('d'): 13,
+	byte('e'): 14,
+	byte('f'): 15,
 }
 
 func Cap(b []byte) []byte {
@@ -92,11 +98,4 @@ func Bin(b []byte) []byte {
 		sumB = append(sumB, byte(sumStr[i]))
 	}
 	return sumB
-}
-
-func Power(a int, b int) int {
-	if b == 0 {
-		return 1
-	}
-	return a * Power(a, b-1)
 }

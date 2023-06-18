@@ -34,7 +34,7 @@ func (l *Lexer) Scan() {
 	reIdentifier := regexp.MustCompile(`[a-zA-Z0-9_]*[']?[a-zA-Z0-9_]\w*[']?`)
 	reModifier := regexp.MustCompile(`\([hex|bin|cap|low|up]+(?:,\s\d)?\)`)
 	rePunct := regexp.MustCompile(`[.,?!:;]+`)
-	reQuotedtext := regexp.MustCompile(`'[^']*'`)
+	reQuotedtext := regexp.MustCompile(`(?U)'(.*[a-zA-Z]'[a-zA-Z])([^']*)'`)
 	reWhitespace := regexp.MustCompile(`\s+`)
 
 	for l.Position < len(l.Input) {
@@ -68,16 +68,7 @@ func (l *Lexer) Scan() {
 	}
 }
 
-func FmtNewLexer(Input []byte) *Lexer {
-	return &Lexer{
-		Input:     Input,
-		Position:  0,
-		Tokens:    []Token{},
-		TokenVals: [][]byte{},
-	}
-}
-
-func (l *Lexer) FmtScan() {
+func (l *Lexer) QuoteFmtScan() {
 	reIdentifier := regexp.MustCompile(`[a-zA-Z0-9_]*[']?[a-zA-Z0-9_]\w*[']?`)
 	reModifier := regexp.MustCompile(`\([hex|bin|cap|low|up]+(?:,\s\d)?\)`)
 	rePunct := regexp.MustCompile(`[.,?!:;]+`)
