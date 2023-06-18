@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	// ensure proper usage
+	// Ensure proper usage
 	if len(os.Args) != 3 {
 		fmt.Println("ERROR: Usage requires input.txt and output.txt")
 		return
@@ -24,14 +24,16 @@ func main() {
 		return
 	}
 
+	// Initialize and scan lexer
 	lexer := goreloaded.NewLexer(reader)
 	lexer.Scan()
 
-	// text alteration
+	// Edit and format for qouted text
 	goreloaded.ModsMap(lexer)
 	goreloaded.ModEdit(&goreloaded.Text, lexer)
 	goreloaded.TextFmt(&goreloaded.FmtText)
 
+	// Write to result.txt
 	file, _ := os.Create("./result.txt")
 	for _, item := range goreloaded.FmtText {
 		file.Write(item)
@@ -39,7 +41,6 @@ func main() {
 
 	//Print the Tokens
 	//prototypr for token printing
-
 	// for i, token := range lexer.Tokens {
 	// 	switch token {
 	// 	case goreloaded.Modifier:

@@ -1,1 +1,1 @@
-harold wilson (cap, 2) : ' I'm a optimist ,but a optimist (up) who carries a raincoat . '
+harold wilson (cap, 2) : ' I'm a optimist ,but a optimist (up, 2) who carries 0100 (bin) raincoat . '
